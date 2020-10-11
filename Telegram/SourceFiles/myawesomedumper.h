@@ -32,7 +32,7 @@ void myawesomedumper_Dump(void*from, unsigned int size, int recv){
     if(!myfile){
       return;
     }
-    fwrite(tdesktop_api_layer,4,1,myfile);
+    fwrite(&tdesktop_api_layer,4,1,myfile);
   }
   int head = (int)size;
   if(recv){
