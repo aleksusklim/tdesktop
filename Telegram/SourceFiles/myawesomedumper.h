@@ -1,4 +1,6 @@
 
+int tdesktop_api_layer = 119;
+
 // mtproto/session_private.cpp
 void myawesomedumper_Dump(void*from, unsigned int size, int recv);
 
@@ -21,7 +23,6 @@ int myawesomedumper_Start(char*arg1,char*arg2);
 #include "mtproto/details/mtproto_dump_to_text.h"
 
 FILE *myfile = NULL;
-int tdesktop_api_layer = 119;
 
 void myawesomedumper_Dump(void*from, unsigned int size, int recv){
   if(!myfile){
