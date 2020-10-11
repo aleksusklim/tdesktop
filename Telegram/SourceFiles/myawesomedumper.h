@@ -1,6 +1,4 @@
 
-int tdesktop_api_layer = 119;
-
 // mtproto/session_private.cpp
 void myawesomedumper_Dump(void*from, unsigned int size, int recv);
 
@@ -13,6 +11,8 @@ int myawesomedumper_Start(char*arg1,char*arg2);
 
 #ifdef myawesomedumper_cpp
 #undef myawesomedumper_cpp
+
+int tdesktop_api_layer = 119;
 
 #include <stdio.h>
 #include <stdlib.h>
