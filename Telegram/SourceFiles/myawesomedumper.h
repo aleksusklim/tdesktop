@@ -12,7 +12,8 @@ int myawesomedumper_Start(char*arg1,char*arg2);
 #ifdef myawesomedumper_cpp
 #undef myawesomedumper_cpp
 
-int tdesktop_api_layer = 119;
+//const char* tdesktop_api_layer = "05\x0d\x0a";
+const char* tdesktop_api_layer = "19\x0d\x0a";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,7 +33,7 @@ void myawesomedumper_Dump(void*from, unsigned int size, int recv){
     if(!myfile){
       return;
     }
-    fwrite(&tdesktop_api_layer,4,1,myfile);
+    fwrite(tdesktop_api_layer,4,1,myfile);
   }
   int head = (int)size;
   if(recv){
@@ -58,7 +59,7 @@ int myawesomedumper_Start(char*arg1,char*arg2){
   }
   int layer = 0;
   fread(&layer,4,1,bin);
-  if(layer!=tdesktop_api_layer){
+  if(layer!=*((int*)tdesktop_api_layer)){
     return 1;
   }
   char *name = (char*)malloc(strlen(arg2)+8);
