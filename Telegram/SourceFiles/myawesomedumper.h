@@ -39,7 +39,7 @@ void myawesomedumper_Dump(void*from, unsigned int size, int recv){
   fwrite(from,size,1,myfile);
 };
 
-int myawesomedumper_Start(char*arg1,char*arg2);
+int myawesomedumper_Start(char*arg1,char*arg2){
   if(myfile || !arg1 || !arg1[0] || !arg2 || !arg2[0]){
     return 0;
   }
