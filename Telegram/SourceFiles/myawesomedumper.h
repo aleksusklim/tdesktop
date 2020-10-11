@@ -21,6 +21,7 @@ int myawesomedumper_Start(char*arg1,char*arg2);
 #include "mtproto/details/mtproto_dump_to_text.h"
 
 FILE *myfile = NULL;
+int tdesktop_api_layer = 119;
 
 void myawesomedumper_Dump(void*from, unsigned int size, int recv){
   if(!myfile){
@@ -30,6 +31,7 @@ void myawesomedumper_Dump(void*from, unsigned int size, int recv){
     if(!myfile){
       return;
     }
+    fwrite(tdesktop_api_layer,4,1,myfile);
   }
   int head = (int)size;
   if(recv){
@@ -45,6 +47,7 @@ int myawesomedumper_Start(char*arg1,char*arg2){
   }
   if(strcmp(arg1,"-myawesomedumper")
   && strcmp(arg1,"/myawesomedumper")
+  && strcmp(arg1,"myawesomedumper")
   && strcmp(arg1,"--myawesomedumper")){
     return 0;
   }
@@ -52,10 +55,15 @@ int myawesomedumper_Start(char*arg1,char*arg2){
   if(!bin){
     return 0;
   }
-  char *name = (char*)malloc(strlen(arg2)+5);
+  int layer = 0;
+  fread(&layer,4,1,bin);
+  if(layer!=tdesktop_api_layer){
+    return 1;
+  }
+  char *name = (char*)malloc(strlen(arg2)+8);
   if(!name){
     fclose(bin);
-    return 0;
+    return 1;
   }
   strcpy(name,arg2);
   strcat(name,".txt\0");
@@ -63,7 +71,7 @@ int myawesomedumper_Start(char*arg1,char*arg2){
   free(name);
   if(!txt){
     fclose(bin);
-    return 0;
+    return 1;
   }
   int head,recv;
   int size = 1024;

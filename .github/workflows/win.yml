@@ -415,11 +415,16 @@ jobs:
       - name: Telegram Desktop build.
         if: env.ONLY_CACHE == 'false'
         shell: cmd
+        env:
+          MYAWESOME_APIID: ${{ secrets.MYAWESOME_APIID }}
+          MYAWESOME_APIHASH: ${{ secrets.MYAWESOME_APIHASH }}
         run: |
           cd %REPO_NAME%\Telegram
 
           call configure.bat ^
-          -D TDESKTOP_API_TEST=ON ^
+          -D TDESKTOP_API_TEST=OFF ^
+          -D %MYAWESOME_APIID% ^
+          -D %MYAWESOME_APIHASH% ^
           -D DESKTOP_APP_USE_PACKAGED=OFF ^
           -D DESKTOP_APP_ENABLE_IPO_OPTIMIZATIONS=OFF ^
           -D DESKTOP_APP_DISABLE_CRASH_REPORTS=OFF ^
