@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "mtproto/session_private.h"
 
+#include "myawesomedumper.h"
+
 #include "mtproto/details/mtproto_bound_key_creator.h"
 #include "mtproto/details/mtproto_dcenter.h"
 #include "mtproto/details/mtproto_dump_to_text.h"
@@ -1341,6 +1343,9 @@ void SessionPrivate::handleReceived() {
 		auto from = decryptedInts + kEncryptedHeaderIntsCount;
 		auto end = from + (messageLength / kIntSize);
 		auto sfrom = decryptedInts + 4U; // msg_id + seq_no + length + message
+    
+    myawesomedumper_Dump((void*)sfrom,(end-sfrom)*sizeof(mtpPrime),1);
+    
 		MTP_LOG(_shiftedDcId, ("Recv: ")
 			+ DumpToText(sfrom, end)
 			+ QString(" (protocolDcId:%1,key:%2)"
@@ -2578,6 +2583,9 @@ bool SessionPrivate::sendSecureRequest(
 	memcpy(request->data() + 2, &_sessionId, 2 * sizeof(mtpPrime));
 
 	auto from = request->constData() + 4;
+  
+  myawesomedumper_Dump((void*)from,messageSize*sizeof(mtpPrime),0);
+  
 	MTP_LOG(_shiftedDcId, ("Send: ")
 		+ DumpToText(from, from + messageSize)
 		+ QString(" (protocolDcId:%1,key:%2)"

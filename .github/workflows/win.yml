@@ -62,7 +62,7 @@ jobs:
       QT: "5_12_8"
       QT_VER: "5.12.8"
       OPENSSL_VER: "1_1_1"
-      UPLOAD_ARTIFACT: "false"
+      UPLOAD_ARTIFACT: "true"
       ONLY_CACHE: "false"
       MANUAL_CACHING: "2"
       DOC_PATH: "docs/building-msvc.md"
@@ -323,7 +323,6 @@ jobs:
           configure ^
           -prefix "%LibrariesPath%\Qt-%QT_VER%" ^
           -debug ^
-          -force-debug-info ^
           -opensource ^
           -confirm-license ^
           -static ^
@@ -422,6 +421,7 @@ jobs:
           call configure.bat ^
           -D TDESKTOP_API_TEST=ON ^
           -D DESKTOP_APP_USE_PACKAGED=OFF ^
+          -D DESKTOP_APP_ENABLE_IPO_OPTIMIZATIONS=OFF ^
           -D DESKTOP_APP_DISABLE_CRASH_REPORTS=OFF ^
           %TDESKTOP_BUILD_DEFINE% ^
           -DCMAKE_SYSTEM_VERSION=%SDK%
