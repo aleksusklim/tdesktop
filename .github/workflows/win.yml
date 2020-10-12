@@ -429,6 +429,7 @@ jobs:
           -D DESKTOP_APP_ENABLE_IPO_OPTIMIZATIONS=OFF ^
           -D DESKTOP_APP_DISABLE_CRASH_REPORTS=OFF ^
           %TDESKTOP_BUILD_DEFINE% ^
+          -U_DEBUG ^
           -DCMAKE_SYSTEM_VERSION=%SDK%
 
           call vcvars32.bat

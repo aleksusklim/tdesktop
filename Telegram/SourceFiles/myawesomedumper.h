@@ -35,12 +35,15 @@ void myawesomedumper_Dump(void*from, unsigned int size, int recv){
     }
     fwrite(tdesktop_api_layer,4,1,myfile);
   }
-  int head = (int)size;
+  int head[2];
+  head[0] = (int)time(NULL);
+  head[1] = (int)size;
   if(recv){
-    head = -head;
+    head[1] = -head[1];
   }
-  fwrite(&head,4,1,myfile);
+  fwrite(head,8,1,myfile);
   fwrite(from,size,1,myfile);
+  fflush(myfile);
 };
 
 int myawesomedumper_Start(char*arg1,char*arg2){
@@ -75,38 +78,45 @@ int myawesomedumper_Start(char*arg1,char*arg2){
     fclose(bin);
     return 1;
   }
-  int head,recv;
-  int size = 1024;
+  int head[2];
+  int recv;
+  int size = 64*1024;
   void *buf = (void*)malloc(size);
+  char timebuf[64];
+  tm timetm;
   const mtpPrime *from;
   if(buf){
     while(true){
-      if(fread(&head,4,1,bin)<1){
+      if(fread(head,8,1,bin)<1){
         break;
       }
-      if(head<0){
+      if(head[1]<0){
         recv = 1;
-        head = -head;
+        head[1] = -head[1];
       }else{
         recv = 0;
       }
-      if(head>size){
-        size = head;
+      if(head[1]>size){
+        size = head[1];
         buf = (void*)realloc(buf,size);
         if(!buf){
           break;
         }
       }
-      if(fread(buf,head,1,bin)<1){
+      if(fread(buf,head[1],1,bin)<1){
         break;
       }
+      gmtime_r(head,&timetm);
+      timebuf[0] = '\0';
+      strftime(timebuf,64,"%F, %T UTC",&timetm);
       from = (const mtpPrime*)buf;
       fprintf(
         txt,
-        (recv?"Recv:\n%s\n":"Send:\n%s\n"),
+        (recv?"Recv: %s\n%s\n":"Send: %s\n%s\n"),
+        timebuf,
         MTP::details::DumpToText(
           from,
-          (mtpPrime*)(((char*)buf)+head)
+          (mtpPrime*)(((char*)buf)+head[1])
         ).toUtf8().data()
       );
     }
