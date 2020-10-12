@@ -19,7 +19,9 @@ const char* tdesktop_api_layer = "19\x0d\x0a";
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <QDateTime>
 
+#include "base/unixtime.h"
 #include "mtproto/core_types.h"
 #include "mtproto/details/mtproto_dump_to_text.h"
 
@@ -82,8 +84,6 @@ int myawesomedumper_Start(char*arg1,char*arg2){
   int recv;
   int size = 64*1024;
   void *buf = (void*)malloc(size);
-  char timebuf[64];
-  tm timetm;
   const mtpPrime *from;
   if(buf){
     while(true){
@@ -106,14 +106,12 @@ int myawesomedumper_Start(char*arg1,char*arg2){
       if(fread(buf,head[1],1,bin)<1){
         break;
       }
-      gmtime_r(head,&timetm);
-      timebuf[0] = '\0';
-      strftime(timebuf,64,"%F, %T UTC",&timetm);
       from = (const mtpPrime*)buf;
       fprintf(
         txt,
         (recv?"Recv: %s\n%s\n":"Send: %s\n%s\n"),
-        timebuf,
+        base::unixtime::parse(head[0])
+          .toString("yyyy.MM.dd, hh:mm:ss 'UTC'").data(),
         MTP::details::DumpToText(
           from,
           (mtpPrime*)(((char*)buf)+head[1])
