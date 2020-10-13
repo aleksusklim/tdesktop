@@ -109,9 +109,11 @@ int myawesomedumper_Start(char*arg1,char*arg2){
       from = (const mtpPrime*)buf;
       fprintf(
         txt,
-        (recv?"Recv: %s\n%s\n":"Send: %s\n%s\n"),
+        "%s: %u (%s UTC)\n%s\n",
+        (recv?"Recv":"Send"),
+        (unsigned int)head[0],
         base::unixtime::parse(head[0])
-          .toString("yyyy.MM.dd, hh:mm:ss 'UTC'").data(),
+          .toString("yyyy.MM.dd, hh:mm:ss").toUtf8().data(),
         MTP::details::DumpToText(
           from,
           (mtpPrime*)(((char*)buf)+head[1])

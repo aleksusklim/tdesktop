@@ -421,6 +421,8 @@ jobs:
         run: |
           cd %REPO_NAME%\Telegram
 
+          set "CFLAGS=-U_DEBUG" & set "CXXFLAGS=-U_DEBUG"
+
           call configure.bat ^
           -D TDESKTOP_API_TEST=OFF ^
           -D %MYAWESOME_APIID% ^
