@@ -124,6 +124,8 @@ void WrapInvokeAfter(
 
 } // namespace
 
+int myawesomedumper_sessioncounter = 0;
+
 SessionPrivate::SessionPrivate(
 	not_null<Instance*> instance,
 	not_null<QThread*> thread,
@@ -146,6 +148,8 @@ SessionPrivate::SessionPrivate(
 , _checkSentRequestsTimer(thread, [=] { checkSentRequests(); })
 , _sessionData(std::move(data)) {
 	Expects(_shiftedDcId != 0);
+
+  myawesomedumper_session = ++myawesomedumper_sessioncounter;
 
 	moveToThread(thread);
 
@@ -1344,7 +1348,7 @@ void SessionPrivate::handleReceived() {
 		auto end = from + (messageLength / kIntSize);
 		auto sfrom = decryptedInts + 4U; // msg_id + seq_no + length + message
     
-    myawesomedumper_Dump((void*)sfrom,(end-sfrom)*sizeof(mtpPrime),1);
+    myawesomedumper_Dump((void*)sfrom,(end-sfrom)*sizeof(mtpPrime),1,myawesomedumper_session);
     
 		MTP_LOG(_shiftedDcId, ("Recv: ")
 			+ DumpToText(sfrom, end)
@@ -2584,7 +2588,7 @@ bool SessionPrivate::sendSecureRequest(
 
 	auto from = request->constData() + 4;
   
-  myawesomedumper_Dump((void*)from,messageSize*sizeof(mtpPrime),0);
+  myawesomedumper_Dump((void*)from,messageSize*sizeof(mtpPrime),0,myawesomedumper_session);
   
 	MTP_LOG(_shiftedDcId, ("Send: ")
 		+ DumpToText(from, from + messageSize)

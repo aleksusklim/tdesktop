@@ -1,6 +1,6 @@
 
 // mtproto/session_private.cpp
-void myawesomedumper_Dump(void*from, unsigned int size, int recv);
+void myawesomedumper_Dump(void*from, unsigned int size, int recv, int session);
 
 int myawesomedumper_Start(char*arg1,char*arg2);
 
@@ -27,7 +27,7 @@ const char* tdesktop_api_layer = "19\x0d\x0a";
 
 FILE *myfile = NULL;
 
-void myawesomedumper_Dump(void*from, unsigned int size, int recv){
+void myawesomedumper_Dump(void*from, unsigned int size, int recv, int session){
   if(!myfile){
     char str[256];
     sprintf(str,"myawesomedumper_%u.bin\0",(unsigned int)time(NULL));
@@ -37,13 +37,14 @@ void myawesomedumper_Dump(void*from, unsigned int size, int recv){
     }
     fwrite(tdesktop_api_layer,4,1,myfile);
   }
-  int head[2];
+  int head[3];
   head[0] = (int)time(NULL);
-  head[1] = (int)size;
+  head[1] = session;
+  head[2] = (int)size;
   if(recv){
-    head[1] = -head[1];
+    head[2] = -head[2];
   }
-  fwrite(head,8,1,myfile);
+  fwrite(head,12,1,myfile);
   fwrite(from,size,1,myfile);
   fflush(myfile);
 };
@@ -80,43 +81,45 @@ int myawesomedumper_Start(char*arg1,char*arg2){
     fclose(bin);
     return 1;
   }
-  int head[2];
-  int recv;
-  int size = 64*1024;
+  int head[3];
+  int recv, block;
+  int size = 256*1024;
   void *buf = (void*)malloc(size);
   const mtpPrime *from;
   if(buf){
     while(true){
-      if(fread(head,8,1,bin)<1){
+      if(fread(head,12,1,bin)<1){
         break;
       }
-      if(head[1]<0){
+      block = head[2];
+      if(block<0){
         recv = 1;
-        head[1] = -head[1];
+        block = -block;
       }else{
         recv = 0;
       }
-      if(head[1]>size){
-        size = head[1];
+      if(block>size){
+        size = block;
         buf = (void*)realloc(buf,size);
         if(!buf){
           break;
         }
       }
-      if(fread(buf,head[1],1,bin)<1){
+      if(fread(buf,block,1,bin)<1){
         break;
       }
       from = (const mtpPrime*)buf;
       fprintf(
         txt,
-        "%s: %u (%s UTC)\n%s\n",
+        "%s/%d: %u (%s)\n%s\n",
         (recv?"Recv":"Send"),
+        head[1],
         (unsigned int)head[0],
         base::unixtime::parse(head[0])
           .toString("yyyy.MM.dd, hh:mm:ss").toUtf8().data(),
         MTP::details::DumpToText(
           from,
-          (mtpPrime*)(((char*)buf)+head[1])
+          (mtpPrime*)(((char*)buf)+block)
         ).toUtf8().data()
       );
     }

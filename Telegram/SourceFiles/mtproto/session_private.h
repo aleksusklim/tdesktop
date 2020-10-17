@@ -51,6 +51,8 @@ public:
 	void sendPingForce();
 	void tryToSend();
 
+  int myawesomedumper_session;
+
 private:
 	static constexpr auto kUpdateStateAlways = 666;
 

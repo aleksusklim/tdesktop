@@ -21,6 +21,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include <QtCore/QByteArray>
 #include <gsl/gsl>
 
+#ifdef _DEBUG
+#undef _DEBUG
+#endif
+
 using mtpPrime = int32;
 using mtpRequestId = int32;
 using mtpMsgId = uint64;

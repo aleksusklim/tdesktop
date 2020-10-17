@@ -9,6 +9,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 #include "core/base_integration.h"
 
+#ifdef _DEBUG
+#undef _DEBUG
+#endif
+
 namespace Core {
 
 class Launcher {
